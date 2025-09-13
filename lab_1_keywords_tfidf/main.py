@@ -62,6 +62,13 @@ def check_float(user_input: Any) -> bool:
 
 
 def clean_and_tokenize(text: str) -> list[str] | None:
+    lowed = target_text.lower()
+    cleaned = ""
+    for symbol in lowed:
+        if symbol.isalnum() or symbol == " ":
+            cleaned += symbol
+    tokenized = cleaned.split()
+    return tokenized
     """
     Remove punctuation, convert to lowercase, and split into tokens.
 
@@ -75,6 +82,10 @@ def clean_and_tokenize(text: str) -> list[str] | None:
 
 
 def remove_stop_words(tokens: list[str], stop_words: list[str]) -> list[str] | None:
+    without_stop_words = []
+    if a not in tokens:
+        without_stop_words.append(a)
+    return without_stop_words
     """
     Exclude stop words from the token sequence.
 
@@ -89,6 +100,7 @@ def remove_stop_words(tokens: list[str], stop_words: list[str]) -> list[str] | N
 
 
 def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
+    
     """
     Create a frequency dictionary from the token sequence.
 
