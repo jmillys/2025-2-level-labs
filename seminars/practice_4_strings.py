@@ -107,6 +107,7 @@ def multiply_string(input_string: str, how_many: int) -> str:
     # student realisation goes here
 
 
+
 # multiply_string('Hi', 2) → 'HiHi'
 # multiply_string('Hi', 3) → 'HiHiHi'
 # multiply_string('Hi', 1) → 'Hi'
@@ -126,6 +127,9 @@ def front_times(input_string: str, how_many: int) -> str:
         str: Repeated substring
     """
     # student realisation goes here
+    return (input_string[:3] * how_many)
+print
+
 
 
 # front_times('Chocolate', 2) → 'ChoCho'
@@ -169,6 +173,7 @@ def make_abba(first_string: str, second_string: str) -> str:
         str: Concatenated result
     """
     # student realisation goes here
+    return 
 
 
 # make_abba('Hi', 'Bye') → 'HiByeByeHi'
@@ -190,6 +195,14 @@ def combo_string(first_string: str, second_string: str) -> str:
         str: Concatenated result
     """
     # student realisation goes here
+    if len(first_string) > len(second_string):
+        shorter = second_string
+        longer = first_string
+    elif len(first_string) < len(second_string):
+        shorter = first_string
+        longer = second_string
+    return shorter+longer+shorter
+
 
 
 # combo_string('Hello', 'hi') → 'hiHellohi'
@@ -214,6 +227,15 @@ def count_vowels(input_string: str) -> int:
         int: Number of vowels
     """
     # student implementation goes here
+    vowels = "aeiou"
+    countv = 0
+    for i in input_string.lower():
+        if i in vowels:
+            countv += 1
+    
+    return countv
+print (count_vowels("xyz"))
+
 
 
 # count_vowels("hello") → 2
@@ -235,6 +257,14 @@ def remove_vowels(input_string: str) -> str:
         str: String without vowels
     """
     # student implementation goes here
+    countc = ""
+    vowels = "aeiou"
+    for el in input_string.lower():
+        if el not in vowels:
+            countc += el
+    return countc
+print(remove_vowels("hello"))
+
 
 
 # remove_vowels("hello") → "hll"
@@ -255,6 +285,14 @@ def count_non_space(input_string: str) -> int:
         int: Number of non-space characters
     """
     # student implementation goes here
+    space = " "
+    countns = 0
+    for el in input_string:
+        if el not in space:
+            countns += 1
+    return countns
+
+print(count_non_space("a b c"))
 
 
 # count_non_space("a b c") → 3
