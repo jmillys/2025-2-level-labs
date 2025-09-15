@@ -62,7 +62,9 @@ def check_float(user_input: Any) -> bool:
 
 
 def clean_and_tokenize(text: str) -> list[str] | None:
-    lowed = target_text.lower()
+    if not isinstance(text, str):
+        return None
+    lowed = text.lower()
     cleaned = ""
     for symbol in lowed:
         if symbol.isalnum() or symbol == " ":
@@ -82,10 +84,14 @@ def clean_and_tokenize(text: str) -> list[str] | None:
 
 
 def remove_stop_words(tokens: list[str], stop_words: list[str]) -> list[str] | None:
+    if not isinstance (tokens, list) or not isinstance (stop_words, list):
+        return None
     without_stop_words = []
-    if a not in tokens:
-        without_stop_words.append(a)
+    for token in tokens:
+        if token not in stop_words:
+            without_stop_words.append(token)
     return without_stop_words
+
     """
     Exclude stop words from the token sequence.
 
@@ -100,7 +106,15 @@ def remove_stop_words(tokens: list[str], stop_words: list[str]) -> list[str] | N
 
 
 def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
-    
+    if not isinstance(tokens, list):
+        return None
+    frequencies = {}
+    for word in tokens:
+        number = tokens.count(word)
+        frequencies[word] = number
+    return frequencies
+
+
     """
     Create a frequency dictionary from the token sequence.
 
@@ -114,6 +128,22 @@ def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
 
 
 def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None:
+    if not isinstance(frequencies, dict) or not isinstance(top, int):
+        return None
+    all_values = list(frequencies.values())
+    if top > len(all_values):
+        return None
+    top_n = []
+    n = 1
+    while n <= top:
+        maximum_value = max(all_values)
+        for key, value in frequencies.items():
+            if value == maximum_value:
+                top_n.append(key)
+                break
+        all_values.remove(maximum_value)
+        n += 1
+    return top_n
     """
     Extract the most frequent tokens.
 
