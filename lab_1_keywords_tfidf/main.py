@@ -9,6 +9,14 @@ from typing import Any
 
 
 def check_list(user_input: Any, elements_type: type, can_be_empty: bool) -> bool:
+    if not user_input:
+        return can_be_empty
+    if not isinstance(user_input, list):
+        return False
+    for element in elements_type:
+        if not isinstance(element, elements_type):
+            return False
+    return True
     """
     Check if the object is a list containing elements of a certain type.
 
@@ -23,6 +31,14 @@ def check_list(user_input: Any, elements_type: type, can_be_empty: bool) -> bool
 
 
 def check_dict(user_input: Any, key_type: type, value_type: type, can_be_empty: bool) -> bool:
+    if not user_input:
+        return can_be_empty
+    if not isinstance(user_input, dict):
+        return False
+    for key, value in user_input:
+        if not isinstance(key,key_type) or not isinstance(value, value_type):
+            return False
+    return True
     """
     Check if the object is a dictionary with keys and values of given types.
 
@@ -38,6 +54,9 @@ def check_dict(user_input: Any, key_type: type, value_type: type, can_be_empty: 
 
 
 def check_positive_int(user_input: Any) -> bool:
+    if not isinstance(user_input, int) or user_input < 0:
+        return False
+    return True
     """
     Check if the object is a positive integer (not bool).
 
@@ -50,6 +69,9 @@ def check_positive_int(user_input: Any) -> bool:
 
 
 def check_float(user_input: Any) -> bool:
+    if not isinstance(user_input, float):
+        return False
+    return True
     """
     Check if the object is a float.
 
@@ -159,6 +181,18 @@ def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None
 
 
 def calculate_tf(frequencies: dict[str, int]) -> dict[str, float] | None:
+    if not isinstance(frequencies, dict):
+        return None
+    all_words = sum(list(frequencies.values()))
+    term_freq = {}
+    for token, value in frequencies.items:
+        tf_value = value / all_words
+        term_freq[token] = tf_value
+    return term_freq
+
+
+
+
     """
     Calculate Term Frequency (TF) for each token.
 
