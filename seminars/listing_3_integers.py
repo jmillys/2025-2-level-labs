@@ -59,10 +59,6 @@ def add_numbers(a: int, b: int) -> int:
         int: Sum of a and b
     """
     # student implementation goes here
-    return a+b
-a = 2
-b = 3
-print(add_numbers(a, b))
 
 # add_numbers(2, 3) → 5
 # add_numbers(-5, 10) → 5
