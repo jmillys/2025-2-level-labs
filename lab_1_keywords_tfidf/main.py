@@ -152,9 +152,11 @@ def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
 def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None:
     if not isinstance(frequencies, dict) or not isinstance(top, int):
         return None
+    if frequencies == {} or top <= 0:
+        return None
     all_values = list(frequencies.values())
     if top > len(all_values):
-        return None
+        top = len(all_values)
     top_n = []
     n = 1
     while n <= top:
@@ -162,6 +164,7 @@ def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None
         for key, value in frequencies.items():
             if value == maximum_value:
                 top_n.append(key)
+                del frequencies[key]
                 break
         all_values.remove(maximum_value)
         n += 1
