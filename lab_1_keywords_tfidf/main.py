@@ -150,7 +150,7 @@ def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
 
 
 def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None:
-    if not isinstance(frequencies, dict) or not isinstance(top, int):
+    if not isinstance(frequencies, dict) or not isinstance(top, int) or isinstance (top, bool):
         return None
     if frequencies == {} or top <= 0:
         return None
@@ -219,8 +219,12 @@ def calculate_tfidf(term_freq: dict[str, float], idf: dict[str, float]) -> dict[
     if idf == {}:
         for term, freq in term_freq.items():
             tfidf_dict[term] = freq * math.log(47)
+        return tfidf_dict
     for term, freq in term_freq.items():
-        tfidf_dict[term] = freq * idf[term]
+        if term in idf:
+           tfidf_dict[term] = freq * idf[term]
+        else:
+            tfidf_dict[term] = 0.0
     return tfidf_dict
     """
     Calculate TF-IDF score for tokens.
