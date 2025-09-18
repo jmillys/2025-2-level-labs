@@ -205,6 +205,9 @@ def calculate_tf(frequencies: dict[str, int]) -> dict[str, float] | None:
 def calculate_tfidf(term_freq: dict[str, float], idf: dict[str, float]) -> dict[str, float] | None:
     if not isinstance(term_freq, dict) or not isinstance(idf, dict):
         return None
+    for key in term_freq:
+        if not isinstance(key, str):
+            return None
     if term_freq == {}:
         return None
     tfidf_dict = {}
