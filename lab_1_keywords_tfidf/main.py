@@ -131,6 +131,9 @@ def remove_stop_words(tokens: list[str], stop_words: list[str]) -> list[str] | N
 def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
     if not isinstance(tokens, list):
         return None
+    for token in tokens:
+        if type(token) != str:
+            return None
     frequencies = {}
     for word in tokens:
         frequencies[word] = tokens.count(word)
@@ -154,21 +157,10 @@ def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None
         return None
     if frequencies == {} or top <= 0:
         return None
-    all_values = list(frequencies.values())
-    if top > len(all_values):
-        top = len(all_values)
-    top_n = []
-    n = 1
-    while n <= top:
-        maximum_value = max(all_values)
-        for key, value in frequencies.items():
-            if value == maximum_value:
-                top_n.append(key)
-                del frequencies[key]
-                break
-        all_values.remove(maximum_value)
-        n += 1
-    return top_n
+    sorted_freq_by_value = dict(sorted(frequencies.items(), key = lambda item: item[1], reverse = True))
+    sorted_keys = list(sorted_freq_by_value.keys())
+    top_n = sorted_keys[:top]
+    return top_n                 
     """
     Extract the most frequent tokens.
 
@@ -218,13 +210,13 @@ def calculate_tfidf(term_freq: dict[str, float], idf: dict[str, float]) -> dict[
     tfidf_dict = {}
     if idf == {}:
         for term, freq in term_freq.items():
-            tfidf_dict[term] = freq * math.log(47)
+            tfidf_dict[term] = freq * math.log(47 / 1)
         return tfidf_dict
     for term, freq in term_freq.items():
         if term in idf:
            tfidf_dict[term] = freq * idf[term]
         else:
-            tfidf_dict[term] = 0.0
+            tfidf_dict[term] = freq * math.log(47 / 1)
     return tfidf_dict
     """
     Calculate TF-IDF score for tokens.
