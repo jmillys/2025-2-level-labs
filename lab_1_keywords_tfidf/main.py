@@ -6,6 +6,7 @@ Extract keywords based on frequency related metrics
 
 # pylint:disable=unused-argument
 from typing import Any
+import math
 
 
 def check_list(user_input: Any, elements_type: type, can_be_empty: bool) -> bool:
@@ -132,8 +133,7 @@ def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
         return None
     frequencies = {}
     for word in tokens:
-        number = tokens.count(word)
-        frequencies[word] = number
+        frequencies[word] = tokens.count(word)
     return frequencies
 
 
@@ -186,11 +186,13 @@ def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None
 def calculate_tf(frequencies: dict[str, int]) -> dict[str, float] | None:
     if not isinstance(frequencies, dict):
         return None
+    for key, value in frequencies.items():
+        if type(key) != str or type(value) != int:
+            return None
     all_words = sum(list(frequencies.values()))
     term_freq = {}
-    for token, value in frequencies.items:
-        tf_value = value / all_words
-        term_freq[token] = tf_value
+    for word, value in frequencies.items():
+        term_freq[word] = value / all_words
     return term_freq
 
 
@@ -209,6 +211,17 @@ def calculate_tf(frequencies: dict[str, int]) -> dict[str, float] | None:
 
 
 def calculate_tfidf(term_freq: dict[str, float], idf: dict[str, float]) -> dict[str, float] | None:
+    if not isinstance(term_freq, dict) or not isinstance(idf, dict):
+        return None
+    if term_freq == {}:
+        return None
+    tfidf_dict = {}
+    if idf == {}:
+        for term, freq in term_freq.items():
+            tfidf_dict[term] = freq * math.log(47)
+    for term, freq in term_freq.items():
+        tfidf_dict[term] = freq * idf[term]
+    return tfidf_dict
     """
     Calculate TF-IDF score for tokens.
 
