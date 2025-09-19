@@ -237,6 +237,27 @@ def calculate_tfidf(term_freq: dict[str, float], idf: dict[str, float]) -> dict[
 def calculate_expected_frequency(
     doc_freqs: dict[str, int], corpus_freqs: dict[str, int]
 ) -> dict[str, float] | None:
+    if not isinstance(doc_freqs, dict) or not isinstance(corpus_freqs, dict):
+        return None
+    for key in doc_freqs:
+        if not isinstance(key, str):
+            return None
+    if doc_freqs == {}:
+        return None
+    expected_frequency = {}
+    words_in_doc = sum(doc_freqs.values())
+    words_in_corpus = sum(corpus_freqs.values())
+    for word in doc_freqs:
+        word_in_doc = doc_freqs[word]
+        word_in_corpus = corpus_freqs.get(word, 0)
+        wo_word_in_doc = words_in_doc - word_in_doc
+        wo_word_in_corpus = words_in_corpus - word_in_corpus
+        expected = (
+            (word_in_doc + word_in_corpus)*(word_in_doc + wo_word_in_doc)/(word_in_doc + word_in_corpus + wo_word_in_doc + wo_word_in_corpus)
+            )
+        expected_frequency[word] = expected
+    return dict(sorted(expected_frequency.items()))
+
     """
     Calculate expected frequency for tokens based on document and corpus frequencies.
 
@@ -253,6 +274,21 @@ def calculate_expected_frequency(
 def calculate_chi_values(
     expected: dict[str, float], observed: dict[str, int]
 ) -> dict[str, float] | None:
+    if not isinstance(expected, dict) or not isinstance(observed, dict):
+        return None
+    if expected == {} or observed == {}:
+        return None
+    for key in expected:
+        if not isinstance(key,str):
+            return None
+    for key in observed:
+        if not isinstance(key,str):
+            return None
+    chi_values = {}
+    for word in observed:
+        chi_values[word] = (((observed[word] - expected[word])** 2) / expected[word])
+    return chi_values
+        
     """
     Calculate chi-squared values for tokens.
 
