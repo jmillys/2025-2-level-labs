@@ -281,8 +281,12 @@ def calculate_chi_values(
     for key in expected:
         if not isinstance(key,str):
             return None
+        if not isinstance(expected[key], (int, float)) or isinstance(expected[key], bool):
+            return None
     for key in observed:
         if not isinstance(key,str):
+            return None
+        if not isinstance(observed[key], (int, float)) or isinstance(observed[key], bool):
             return None
     chi_values = {}
     for word in observed:
@@ -305,6 +309,21 @@ def calculate_chi_values(
 def extract_significant_words(
     chi_values: dict[str, float], alpha: float
 ) -> dict[str, float] | None:
+    if not isinstance(chi_values, dict) or not isinstance(alpha, float):
+        return None
+    if chi_values == {}:
+        return None
+    for key in chi_values:
+        if not isinstance(key, str):
+            return None
+    criterion = {0.05: 3.842, 0.01: 6.635, 0.001: 10.828}
+    if alpha not in criterion:
+        return None
+    significant_words = {}
+    for key, value in chi_values.items():
+        if value > criterion[alpha]:
+            significant_words[key] = value
+    return significant_words
     """
     Select tokens with chi-squared values greater than the critical threshold.
 
