@@ -32,9 +32,18 @@ def main() -> None:
         corpus_freqs = load(file)
     #result = None
     #assert result, "Keywords are not extracted"
-    
     tokens = clean_and_tokenize(target_text)
-    print(f"Tokens (first 20): {tokens[:20]}")
+    wo_stop_words = remove_stop_words(tokens, stop_words)
+    frequencies = calculate_frequencies(wo_stop_words)
+    top_n_1 = get_top_n(frequencies, 10)
+    term_frequencies = calculate_tf(frequencies)
+    tf_idf = calculate_tfidf(term_frequencies, idf)
+    top_n_2 = get_top_n(tf_idf, 10)
+    expected = calculate_expected_frequency(frequencies, corpus_freqs)
+    chi_values = calculate_chi_values(expected, frequencies)
+    significant_words = extract_significant_words(chi_values, 0.001)
+    top_n_3 = get_top_n(significant_words, 10)
+    print(top_n_3)
 
 
 
