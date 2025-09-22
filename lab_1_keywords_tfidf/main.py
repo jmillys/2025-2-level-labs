@@ -114,7 +114,6 @@ def remove_stop_words(tokens: list[str], stop_words: list[str]) -> list[str] | N
         if token not in stop_words:
             without_stop_words.append(token)
     return without_stop_words
-
     """
     Exclude stop words from the token sequence.
 
@@ -138,8 +137,6 @@ def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
     for word in tokens:
         frequencies[word] = tokens.count(word)
     return frequencies
-
-
     """
     Create a frequency dictionary from the token sequence.
 
@@ -186,10 +183,6 @@ def calculate_tf(frequencies: dict[str, int]) -> dict[str, float] | None:
     for word, value in frequencies.items():
         term_freq[word] = value / all_words
     return term_freq
-
-
-
-
     """
     Calculate Term Frequency (TF) for each token.
 
@@ -257,7 +250,6 @@ def calculate_expected_frequency(
             )
         expected_frequency[word] = expected
     return dict(sorted(expected_frequency.items()))
-
     """
     Calculate expected frequency for tokens based on document and corpus frequencies.
 
