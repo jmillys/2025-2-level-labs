@@ -157,10 +157,10 @@ def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None
         return None
     if frequencies == {} or top <= 0:
         return None
-    sorted_freq_by_value = dict(sorted(frequencies.items(), key = lambda item: item[1], reverse = True))
-    sorted_keys = list(sorted_freq_by_value.keys())
+    sorted_freq = dict(sorted(frequencies.items(), key = lambda item: item[1], reverse = True))
+    sorted_keys = list(sorted_freq.keys())
     top_n = sorted_keys[:top]
-    return top_n                 
+    return top_n
     """
     Extract the most frequent tokens.
 
@@ -217,7 +217,7 @@ def calculate_tfidf(term_freq: dict[str, float], idf: dict[str, float]) -> dict[
         return tfidf_dict
     for term, freq in term_freq.items():
         if term in idf:
-           tfidf_dict[term] = freq * idf[term]
+            tfidf_dict[term] = freq * idf[term]
         else:
             tfidf_dict[term] = freq * math.log(47 / 1)
     return tfidf_dict
@@ -248,12 +248,12 @@ def calculate_expected_frequency(
     words_in_doc = sum(doc_freqs.values())
     words_in_corpus = sum(corpus_freqs.values())
     for word in doc_freqs:
-        word_in_doc = doc_freqs[word]
-        word_in_corpus = corpus_freqs.get(word, 0)
-        wo_word_in_doc = words_in_doc - word_in_doc
-        wo_word_in_corpus = words_in_corpus - word_in_corpus
+        w_in_doc = doc_freqs[word]
+        w_in_corp = corpus_freqs.get(word, 0)
+        wo_w_in_doc = words_in_doc - w_in_doc
+        wo_w_in_corp = words_in_corpus - w_in_corp
         expected = (
-            (word_in_doc + word_in_corpus)*(word_in_doc + wo_word_in_doc)/(word_in_doc + word_in_corpus + wo_word_in_doc + wo_word_in_corpus)
+            (w_in_doc + w_in_corp)*(w_in_doc + wo_w_in_doc)/(w_in_doc + w_in_corp + wo_w_in_doc + wo_w_in_corp)
             )
         expected_frequency[word] = expected
     return dict(sorted(expected_frequency.items()))
@@ -279,20 +279,15 @@ def calculate_chi_values(
     if expected == {} or observed == {}:
         return None
     for key in expected:
-        if not isinstance(key,str):
-            return None
-        if not isinstance(expected[key], (int, float)) or isinstance(expected[key], bool):
+        if not isinstance(key,str) or not isinstance(expected[key], (int, float)) or isinstance(expected[key], bool):
             return None
     for key in observed:
-        if not isinstance(key,str):
-            return None
-        if not isinstance(observed[key], (int, float)) or isinstance(observed[key], bool):
+        if not isinstance(key,str) or not isinstance(observed[key], (int, float)) or isinstance(observed[key], bool):
             return None
     chi_values = {}
     for word in observed:
-        chi_values[word] = (((observed[word] - expected[word])** 2) / expected[word])
-    return chi_values
-        
+        chi_values[word] = ((observed[word] - expected[word])** 2) / expected[word]
+    return chi_values  
     """
     Calculate chi-squared values for tokens.
 
