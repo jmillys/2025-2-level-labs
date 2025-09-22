@@ -10,7 +10,7 @@ import math
 
 
 def check_list(user_input: Any, elements_type: type, can_be_empty: bool) -> bool:
-    
+
     """
     Check if the object is a list containing elements of a certain type.
 
@@ -34,7 +34,7 @@ def check_list(user_input: Any, elements_type: type, can_be_empty: bool) -> bool
 
 
 def check_dict(user_input: Any, key_type: type, value_type: type, can_be_empty: bool) -> bool:
-    
+ 
     """
     Check if the object is a dictionary with keys and values of given types.
 
@@ -58,7 +58,7 @@ def check_dict(user_input: Any, key_type: type, value_type: type, can_be_empty: 
 
 
 def check_positive_int(user_input: Any) -> bool:
-    
+
     """
     Check if the object is a positive integer (not bool).
 
@@ -74,7 +74,7 @@ def check_positive_int(user_input: Any) -> bool:
 
 
 def check_float(user_input: Any) -> bool:
-    
+
     """
     Check if the object is a float.
 
@@ -90,7 +90,7 @@ def check_float(user_input: Any) -> bool:
 
 
 def clean_and_tokenize(text: str) -> list[str] | None:
-    
+ 
     """
     Remove punctuation, convert to lowercase, and split into tokens.
 
@@ -135,7 +135,7 @@ def remove_stop_words(tokens: list[str], stop_words: list[str]) -> list[str] | N
 
 
 def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
-    
+
     """
     Create a frequency dictionary from the token sequence.
 
@@ -149,7 +149,7 @@ def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
     if not isinstance(tokens, list):
         return None
     for token in tokens:
-        if type(token) != str:
+        if not isinstance(token, str):
             return None
     frequencies = {}
     for word in tokens:
@@ -158,7 +158,7 @@ def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
 
 
 def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None:
-    
+
     """
     Extract the most frequent tokens.
 
@@ -182,7 +182,7 @@ def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None
 
 
 def calculate_tf(frequencies: dict[str, int]) -> dict[str, float] | None:
-    
+
     """
     Calculate Term Frequency (TF) for each token.
 
@@ -196,7 +196,7 @@ def calculate_tf(frequencies: dict[str, int]) -> dict[str, float] | None:
     if not isinstance(frequencies, dict):
         return None
     for key, value in frequencies.items():
-        if type(key) != str or type(value) != int:
+        if not isinstance(key, str) or not isinstance(value, int):
             return None
     all_words = sum(list(frequencies.values()))
     term_freq = {}
@@ -206,7 +206,7 @@ def calculate_tf(frequencies: dict[str, int]) -> dict[str, float] | None:
 
 
 def calculate_tfidf(term_freq: dict[str, float], idf: dict[str, float]) -> dict[str, float] | None:
-   
+
     """
     Calculate TF-IDF score for tokens.
 
@@ -242,7 +242,7 @@ def calculate_tfidf(term_freq: dict[str, float], idf: dict[str, float]) -> dict[
 def calculate_expected_frequency(
     doc_freqs: dict[str, int], corpus_freqs: dict[str, int]
 ) -> dict[str, float] | None:
-   
+
     """
     Calculate expected frequency for tokens based on document and corpus frequencies.
 
@@ -313,7 +313,7 @@ def calculate_chi_values(
 def extract_significant_words(
     chi_values: dict[str, float], alpha: float
 ) -> dict[str, float] | None:
-    
+
     """
     Select tokens with chi-squared values greater than the critical threshold.
 
