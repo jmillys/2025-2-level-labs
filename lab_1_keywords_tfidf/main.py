@@ -270,7 +270,8 @@ def calculate_expected_frequency(
         wo_w_in_d = words_in_doc - w_in_doc
         wo_w_in_c = words_in_corpus - w_in_corp
         expected = (
-            (w_in_doc + w_in_corp)*(w_in_doc + wo_w_in_d)/(w_in_doc + w_in_corp + wo_w_in_d + wo_w_in_c)
+            (w_in_doc + w_in_corp)*(w_in_doc + wo_w_in_d)/(w_in_doc + w_in_corp + \
+                                                           wo_w_in_d + wo_w_in_c)
             )
         expected_frequency[word] = expected
     return dict(sorted(expected_frequency.items()))
@@ -296,10 +297,12 @@ def calculate_chi_values(
     if expected == {} or observed == {}:
         return None
     for key in expected:
-        if not isinstance(key,str) or not isinstance(expected[key], (int, float)) or isinstance(expected[key], bool):
+        if (not isinstance(key,str) or not isinstance(expected[key], (int, float)) \
+            or isinstance(expected[key], bool)):
             return None
     for key in observed:
-        if not isinstance(key,str) or not isinstance(observed[key], (int, float)) or isinstance(observed[key], bool):
+        if not isinstance(key,str) or not isinstance(observed[key], (int, float)) \
+            or isinstance(observed[key], bool):
             return None
     chi_values = {}
     for word in observed:
