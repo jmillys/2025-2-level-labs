@@ -30,17 +30,17 @@ def main() -> None:
         idf = load(file)
     with open("assets/corpus_frequencies.json", "r", encoding="utf-8") as file:
         corpus_freqs = load(file)
-    tokens = clean_and_tokenize(target_text)
-    wo_stop_words = remove_stop_words(tokens, stop_words)
-    frequencies = calculate_frequencies(wo_stop_words)
-    top_n_1 = get_top_n(frequencies, 10)
-    term_frequencies = calculate_tf(frequencies)
-    tf_idf = calculate_tfidf(term_frequencies, idf)
-    top_n_2 = get_top_n(tf_idf, 10)
-    expected = calculate_expected_frequency(frequencies, corpus_freqs)
-    chi_values = calculate_chi_values(expected, frequencies)
-    significant_words = extract_significant_words(chi_values, 0.001)
-    top_n_3 = get_top_n(significant_words, 10)
+    tokens = clean_and_tokenize(target_text) or []
+    wo_stop_words = remove_stop_words(tokens, stop_words) or []
+    frequencies = calculate_frequencies(wo_stop_words) or {}
+    top_n_1 = get_top_n(frequencies, 10) or []
+    term_frequencies = calculate_tf(frequencies) or {}
+    tf_idf = calculate_tfidf(term_frequencies, idf) or {}
+    top_n_2 = get_top_n(tf_idf, 10) or []
+    expected = calculate_expected_frequency(frequencies, corpus_freqs) or {}
+    chi_values = calculate_chi_values(expected, frequencies) or {}
+    significant_words = extract_significant_words(chi_values, 0.001) or {}
+    top_n_3 = get_top_n(significant_words, 10) or []
     print(top_n_3)
     #result = None
     #assert result, "Keywords are not extracted"
