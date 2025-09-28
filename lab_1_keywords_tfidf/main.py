@@ -164,7 +164,8 @@ def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None
         In case of corrupt input arguments, None is returned.
     """
     if (
-        not check_dict(frequencies, str, (int, float), False)
+        not check_dict(frequencies, str, int, False) and 
+        not check_dict(frequencies, str, float, False)
         or not check_positive_int(top)
         or isinstance(top, bool)
     ):
