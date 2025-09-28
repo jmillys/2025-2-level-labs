@@ -41,8 +41,8 @@ def main() -> None:
     significant_words = extract_significant_words(chi_values, 0.001) or {}
     top_n_3 = get_top_n(significant_words, 10) or []
     print(top_n_3)
-    result = None
-    #assert result, "Keywords are not extracted"
+    result = top_n_3
+    assert result, "Keywords are not extracted"
 
 
 
