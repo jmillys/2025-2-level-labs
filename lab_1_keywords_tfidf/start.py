@@ -3,7 +3,6 @@ Frequency-driven keyword extraction starter
 """
 
 # pylint:disable=too-many-locals, unused-argument, unused-variable, invalid-name, duplicate-code
-
 from json import load
 
 from lab_1_keywords_tfidf.main import (
@@ -49,8 +48,6 @@ def main() -> None:
     print(', '.join(key_words_chi))
     result = key_words_chi
     assert result, "Keywords are not extracted"
-
-
 
 
 if __name__ == "__main__":

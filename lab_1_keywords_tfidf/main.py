@@ -28,15 +28,6 @@ def check_list(user_input: Any, elements_type: type, can_be_empty: bool) -> bool
     return all(isinstance(element, elements_type) for element in user_input)
 
 
-    if not user_input:
-        return can_be_empty
-    if not isinstance(user_input, list):
-        return False
-    for element in user_input:
-        if not isinstance(element, elements_type):
-            return False
-    return True
-
 
 def check_dict(user_input: Any, key_type: type, value_type: type, can_be_empty: bool) -> bool:
     """
