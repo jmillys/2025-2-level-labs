@@ -223,6 +223,13 @@ def delete_letter(word: str) -> list[str]:
 
     In case of corrupt input arguments, empty list is returned.
     """
+    if not isinstance(word, str):
+        return []
+    deleted_letter_lst = []
+    for i in word:
+        new = word.replace(i, "")
+        deleted_letter_lst.append(new)
+    return sorted(deleted_letter_lst)
 
 
 def add_letter(word: str, alphabet: list[str]) -> list[str]:
@@ -239,6 +246,16 @@ def add_letter(word: str, alphabet: list[str]) -> list[str]:
 
     In case of corrupt input arguments, empty list is returned.
     """
+    if (not isinstance(word, str) or
+        not check_list(alphabet, str, False)
+    ):
+        return []
+    added_letter_lst = []
+    for i in range(len(word) + 1):
+        for letter in alphabet:
+            new = word[:i] + letter + word[i:]
+            added_letter_lst.append(new)
+    return sorted(added_letter_lst)
 
 
 def replace_letter(word: str, alphabet: list[str]) -> list[str]:
@@ -255,6 +272,16 @@ def replace_letter(word: str, alphabet: list[str]) -> list[str]:
 
     In case of corrupt input arguments, empty list is returned.
     """
+    if (not isinstance(word, str) or
+        not check_list(alphabet, str, False)
+    ):
+        return []
+    replaced_letter_lst = []
+    for i in range(len(word)):
+        for letter in alphabet:
+            new = word[:i] + letter + word[i+1:]
+            replaced_letter_lst.append(new)
+    return sorted(replaced_letter_lst)
 
 
 def swap_adjacent(word: str) -> list[str]:
@@ -270,6 +297,13 @@ def swap_adjacent(word: str) -> list[str]:
 
     In case of corrupt input arguments, empty list is returned.
     """
+    if not isinstance(word, str):
+        return []
+    swapped = []
+    for i in range(len(word) - 1):
+        new = word[:i] + word[i+1] + word[i] + word[i+2:]
+        swapped.append(new)
+    return sorted(swapped)
 
 
 def generate_candidates(word: str, alphabet: list[str]) -> list[str] | None:
@@ -286,6 +320,13 @@ def generate_candidates(word: str, alphabet: list[str]) -> list[str] | None:
 
     In case of corrupt input arguments, None is returned.
     """
+    if (not isinstance(word, str) or
+        not check_list(alphabet, str, True)
+    ):
+        return None
+    candidates = (delete_letter(word) + add_letter(word, alphabet) 
+                         + replace_letter(word, alphabet) + swap_adjacent(word))
+    return sorted(set(candidates))
 
 
 def propose_candidates(word: str, alphabet: list[str]) -> tuple[str, ...] | None:
