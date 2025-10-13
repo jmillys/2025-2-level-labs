@@ -101,7 +101,7 @@ def calculate_distance(
     """
     if (not isinstance(first_token, str) or
         not check_dict(vocabulary, str, float, False) or
-        not check_list(alphabet, str, True) or
+        alphabet is not None and not check_list(alphabet, str, True) or
         not first_token or
         method not in ("jaccard",
                        "frequency-based",
@@ -111,9 +111,9 @@ def calculate_distance(
         return None
     calculated_distance = {}
     if method == "jaccard":
-        for word in vocabulary.items:
+        for word in vocabulary.keys():
             distance = calculate_jaccard_distance(first_token, word)
-            if not distance:
+            if distance is None:
                     return None
             calculated_distance[word] = distance
     return calculated_distance
@@ -142,17 +142,18 @@ def find_correct_word(
     """
     if (not isinstance(wrong_word, str) or
         not check_dict(vocabulary, str, float, False) or
-        not check_list(alphabet, str, True) or
+        alphabet is not None and not check_list(alphabet, str, True) or
         method not in ("jaccard",
                        "frequency-based",
                        "levenshtein",
                        "jaro-winkler")
     ):
         return None
-    if method == "jaccard":
-        distances = calculate_distance(wrong_word, vocabulary, "jaccard", None)
-        if distances is None:
-            return None
+    if not vocabulary:
+        return None
+    distances = calculate_distance(wrong_word, vocabulary, method, alphabet)
+    if distances is None:
+        return None
     lowest_score = min(distances.values())
     candidates = []
     for key, value in distances.items():
@@ -160,13 +161,10 @@ def find_correct_word(
             candidates.append(key)
     if not candidates:
         return None
-    if len(candidates) > 1:
-        min_difference = min([len(possible) - len(wrong_word) for possible in candidates])
-        min_length_possible = []
-        for possible in candidates:
-            if len(possible) - len(wrong_word) == min_difference:
-                min_length_possible.append(possible)
-    return sorted(min_length_possible)[0]
+    min_length_diff = min(abs(len(candidate) - len(wrong_word)) for candidate in candidates)
+    length_candidates = [candidate for candidate in candidates 
+                        if abs(len(candidate) - len(wrong_word)) == min_length_diff]
+    return sorted(length_candidates)[0]
 
 
 def initialize_levenshtein_matrix(
