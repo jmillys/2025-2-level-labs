@@ -341,6 +341,21 @@ def propose_candidates(word: str, alphabet: list[str]) -> tuple[str, ...] | None
 
     In case of corrupt input arguments, None is returned.
     """
+    if (not isinstance(word, str) or
+        not check_list(alphabet, str, True)
+    ):
+        return None
+    candidates = set()
+    one_mist_candidates = generate_candidates(word, alphabet)
+    if one_mist_candidates is None:
+        return None
+    candidates.update(one_mist_candidates)
+    for word in one_mist_candidates:
+        two_mist_candidates = generate_candidates(word, alphabet)
+        if two_mist_candidates is None:
+            return None
+        candidates.update(two_mist_candidates)
+    return tuple(sorted(candidates))
 
 
 def calculate_frequency_distance(
@@ -359,6 +374,12 @@ def calculate_frequency_distance(
 
     In case of corrupt input arguments, None is returned.
     """
+    if (not isinstance(word, str) or
+        not isinstance(frequencies, dict) or
+        not frequencies or
+        not check_list(alphabet, str, True)):
+        return None
+    
 
 
 def get_matches(
