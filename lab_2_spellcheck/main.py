@@ -116,6 +116,11 @@ def calculate_distance(
             if distance is None:
                     return None
             calculated_distance[word] = distance
+    elif method == "frequency-based":
+        distance = calculate_frequency_distance(first_token, vocabulary, alphabet or [])
+        if distance is None:
+                return None
+        calculated_distance = distance
     return calculated_distance
 
 
@@ -224,8 +229,8 @@ def delete_letter(word: str) -> list[str]:
     if not isinstance(word, str):
         return []
     deleted_letter_lst = []
-    for i in word:
-        new = word.replace(i, "")
+    for i in range(len(word)):
+        new = word[:i] + word[i+1:]
         deleted_letter_lst.append(new)
     return sorted(deleted_letter_lst)
 
@@ -350,8 +355,8 @@ def propose_candidates(word: str, alphabet: list[str]) -> tuple[str, ...] | None
     if one_mist_candidates is None:
         return None
     candidates.update(one_mist_candidates)
-    for word in one_mist_candidates:
-        two_mist_candidates = generate_candidates(word, alphabet)
+    for candidate in one_mist_candidates:
+        two_mist_candidates = generate_candidates(candidate, alphabet)
         if two_mist_candidates is None:
             return None
         candidates.update(two_mist_candidates)
