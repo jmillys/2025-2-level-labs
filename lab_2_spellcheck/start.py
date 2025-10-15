@@ -10,6 +10,7 @@ from lab_2_spellcheck.main import (
     find_correct_word,
     find_out_of_vocab_words,
 )
+
 # pylint:disable=unused-variable, duplicate-code, too-many-locals
 
 
