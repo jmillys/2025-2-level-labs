@@ -125,10 +125,10 @@ def calculate_distance(
                 return None
             calculated_distance[word] = distance
     elif method == "frequency-based":
-        distance = calculate_frequency_distance(first_token, vocabulary, alphabet or [])
-        if distance is None:
+        result = calculate_frequency_distance(first_token, vocabulary, alphabet or [])
+        if result is None:
             return None
-        calculated_distance = distance
+        calculated_distance = result
     elif method == "jaro-winkler":
         return None
     return calculated_distance
