@@ -41,7 +41,6 @@ def main() -> None:
         all_sentence_tokens.extend(sentence_tokens_without_stop_words)
     error_words = find_out_of_vocab_words(all_sentence_tokens, vocabulary) or []
     print(error_words)
-
     alphabet = [chr(i) for i in range(1072, 1104)]
     all_results = {}
     for error_word in error_words:
@@ -50,11 +49,15 @@ def main() -> None:
                                                'jaccard', alphabet) or {}
         frequency_correction = find_correct_word(error_word, vocabulary,
                                                  'frequency-based', alphabet) or {}
+        levenshtein_correction = find_correct_word(error_word, vocabulary,
+                                                   'levenshtein', alphabet) or {}
         print(f"  Jaccard: {jaccard_correction}")
         print(f"  Frequency-based: {frequency_correction}")
+        print(f"  Levenshtein: {levenshtein_correction}")
         all_results[error_word] = {
             'jaccard': jaccard_correction,
             'frequency-based': frequency_correction,
+            'levenshtein': levenshtein_correction,
         }
     result = all_results
     assert result, "Result is None"
