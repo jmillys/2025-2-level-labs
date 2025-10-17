@@ -100,14 +100,11 @@ def calculate_distance(
 
     In case of corrupt input arguments or unsupported method, None is returned.
     """
-    if (not isinstance(first_token, str) or
-        not check_dict(vocabulary, str, float, False) or
-        alphabet is not None and not check_list(alphabet, str, True) or
-        not first_token or
-        method not in ("jaccard",
-                       "frequency-based",
-                       "levenshtein",
-                       "jaro-winkler")
+    if (
+        not isinstance(first_token, str)
+        or not check_dict(vocabulary, str, float, False)
+        or method not in ["jaccard", "frequency-based", "levenshtein", "jaro-winkler"]
+        or not alphabet is None and not check_list(alphabet, str, False)
     ):
         return None
     calculated_distance = {}
