@@ -78,7 +78,6 @@ def calculate_jaccard_distance(token: str, candidate: str) -> float | None:
     jaccard_distance = (1 - len(set_token & set_candidate) /
                         len(set_token | set_candidate))
     return jaccard_distance
-    
 
 
 def calculate_distance(
@@ -113,17 +112,17 @@ def calculate_distance(
         return None
     calculated_distance = {}
     if method == "jaccard":
-        for word in vocabulary.keys():
-            distance = calculate_jaccard_distance(first_token, word)
-            if distance is None:
-                    return None
-            calculated_distance[word] = distance
-    elif method == "levenshtein":
-        for word in vocabulary:
-            distance = calculate_levenshtein_distance(first_token, word)
+        for token in vocabulary:
+            distance = calculate_jaccard_distance(first_token, token)
             if distance is None:
                 return None
-            calculated_distance[word] = distance
+            calculated_distance[token] = distance
+    elif method == "levenshtein":
+        for token in vocabulary:
+            distance = calculate_levenshtein_distance(first_token, token)
+            if distance is None:
+                return None
+            calculated_distance[token] = distance
     elif method == "frequency-based":
         result = calculate_frequency_distance(first_token, vocabulary, alphabet or [])
         if result is None:
@@ -177,7 +176,7 @@ def find_correct_word(
     if not candidates:
         return None
     min_length_diff = min(abs(len(candidate) - len(wrong_word)) for candidate in candidates)
-    length_candidates = [candidate for candidate in candidates 
+    length_candidates = [candidate for candidate in candidates
                         if abs(len(candidate) - len(wrong_word)) == min_length_diff]
     return sorted(length_candidates)[0]
 
@@ -377,7 +376,7 @@ def generate_candidates(word: str, alphabet: list[str]) -> list[str] | None:
         not check_list(alphabet, str, True)
     ):
         return None
-    candidates = (delete_letter(word) + add_letter(word, alphabet) 
+    candidates = (delete_letter(word) + add_letter(word, alphabet)
                          + replace_letter(word, alphabet) + swap_adjacent(word))
     return sorted(set(candidates))
 
@@ -441,7 +440,6 @@ def calculate_frequency_distance(
         for candidate in candidates:
             if candidate in frequencies:
                 distance[candidate] = 1.0 - frequencies[candidate]
-    
     return distance
 
 
