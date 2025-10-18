@@ -436,7 +436,7 @@ def calculate_frequency_distance(
     if candidates:
         for candidate in candidates:
             if candidate in frequencies:
-                distance[candidate] = 1.0 - frequencies[candidate]
+                distance[candidate] = 1.0 - frequencies.get(candidate, 0.0)
     return distance
 
 
