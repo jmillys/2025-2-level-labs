@@ -44,7 +44,7 @@ def main() -> None:
     alphabet = [chr(i) for i in range(1072, 1104)]
     all_results = {}
     for error_word in error_words:
-        print(f"\nИсправление для '{error_word}':")
+        print(f"\nCorrection for '{error_word}':")
         jaccard_correction = find_correct_word(error_word, vocabulary,
                                                'jaccard', alphabet) or {}
         frequency_correction = find_correct_word(error_word, vocabulary,
