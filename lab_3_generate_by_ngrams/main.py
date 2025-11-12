@@ -59,8 +59,6 @@ class TextProcessor:
             tokens.pop(-1)
         return tuple(tokens)
 
-
-
     def get_id(self, element: str) -> int | None:
         """
         Retrieve a unique identifier of an element.
@@ -74,6 +72,10 @@ class TextProcessor:
         In case of corrupt input arguments or arguments not included in storage,
         None is returned
         """
+        if (not isinstance(element, str) or
+            element not in self._storage):
+            return None
+        return self._storage[element]
 
     def get_end_of_word_token(self) -> str:  # type: ignore[empty-body]
         """
@@ -82,6 +84,7 @@ class TextProcessor:
         Returns:
             str: EoW token
         """
+        return self._end_of_word_token
 
     def get_token(self, element_id: int) -> str | None:
         """
@@ -95,6 +98,12 @@ class TextProcessor:
 
         In case of corrupt input arguments or arguments not included in storage, None is returned
         """
+        if not isinstance(element_id, int):
+            return None
+        for key, value in self._storage.items():
+            if value == element_id:
+                return key
+        return None
 
     def encode(self, text: str) -> tuple[int, ...] | None:
         """
@@ -112,6 +121,20 @@ class TextProcessor:
         In case of corrupt input arguments, None is returned.
         In case any of methods used return None, None is returned.
         """
+        if not isinstance(text, str):
+            return None
+        tokens = self._tokenize(text)
+        if tokens is None:
+            return None
+        result = []
+        for token in tokens:
+            if token not in self._storage:
+                self._put(token)
+            token_id = self.get_id(token)
+            if token_id is None:
+                return None
+            result.append(token_id)
+        return tuple(result)
 
     def _put(self, element: str) -> None:
         """
@@ -123,6 +146,10 @@ class TextProcessor:
         In case of corrupt input arguments or invalid argument length,
         an element is not added to storage
         """
+        if not isinstance(element, str) or len(element) != 1 or not element:
+            return
+        if element not in self._storage:
+            self._storage[element] = len(self._storage)
 
     def decode(self, encoded_corpus: tuple[int, ...]) -> str | None:
         """
@@ -140,6 +167,12 @@ class TextProcessor:
         In case of corrupt input arguments, None is returned.
         In case any of methods used return None, None is returned.
         """
+        if not isinstance(encoded_corpus, tuple) or not encoded_corpus:
+            return None
+        result = self._decode(encoded_corpus)
+        if result is None:
+            return None
+        return self._postprocess_decoded_text(result)
 
     def fill_from_ngrams(self, content: dict) -> None:
         """
@@ -148,6 +181,13 @@ class TextProcessor:
         Args:
             content (dict): ngrams from external JSON
         """
+        if not isinstance(content, dict):
+            return
+        ngrams_freq = content.get('freq', {})
+        for ngram in ngrams_freq.keys():
+            for char in ngram:
+                if char.isalpha() or char == self._end_of_word_token:
+                    self._put(char)
 
     def _decode(self, corpus: tuple[int, ...]) -> tuple[str, ...] | None:
         """
@@ -162,6 +202,15 @@ class TextProcessor:
         In case of corrupt input arguments, None is returned.
         In case any of methods used return None, None is returned.
         """
+        if not isinstance(corpus, tuple) or not corpus:
+            return None
+        result = []
+        for element in corpus:
+            decoded_element = self.get_token(element)
+            if decoded_element is None:
+                return None
+            result.append(decoded_element)
+        return tuple(result)
 
     def _postprocess_decoded_text(self, decoded_corpus: tuple[str, ...]) -> str | None:
         """
@@ -178,7 +227,12 @@ class TextProcessor:
 
         In case of corrupt input arguments, None is returned
         """
-
+        if not isinstance(decoded_corpus, tuple) or not decoded_corpus:
+            return None
+        decoded_text = ''.join(decoded_corpus).replace('_', ' ').capitalize()
+        if decoded_text[-1] == ' ':
+            return decoded_text[:-1] + '.'
+        return decoded_text + '.'
 
 class NGramLanguageModel:
     """
