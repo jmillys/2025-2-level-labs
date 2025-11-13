@@ -252,6 +252,9 @@ class NGramLanguageModel:
             encoded_corpus (tuple | None): Encoded text
             n_gram_size (int): A size of n-grams to use for language modelling
         """
+        self._encoded_corpus = encoded_corpus
+        self._n_gram_size = n_gram_size
+        self._n_gram_frequencies = {}
 
     def get_n_gram_size(self) -> int:  # type: ignore[empty-body]
         """
@@ -260,6 +263,7 @@ class NGramLanguageModel:
         Returns:
             int: Size of stored n_grams
         """
+        return self._n_gram_size
 
     def set_n_grams(self, frequencies: dict) -> None:
         """
@@ -268,6 +272,9 @@ class NGramLanguageModel:
         Args:
             frequencies (dict): Computed in advance frequencies for n-grams
         """
+        if not isinstance(frequencies, dict) or not frequencies:
+            return
+        self._n_gram_frequencies = frequencies
 
     def build(self) -> int:  # type: ignore[empty-body]
         """
@@ -281,6 +288,24 @@ class NGramLanguageModel:
         In case of corrupt input arguments or methods used return None,
         1 is returned
         """
+        if not isinstance(self._encoded_corpus, tuple) or not self._encoded_corpus:
+            return 1
+        n_grams = self._extract_n_grams(self._encoded_corpus)
+        if not isinstance(n_grams, tuple) or not n_grams:
+            return 1
+        n_gram_counts = {}
+        match_counts = {}
+        for n_gram in n_grams:
+            n_gram_counts[n_gram] = n_gram_counts.get(n_gram, 0) + 1
+            match = n_gram[:-1]
+            match_counts[match] = match_counts.get(match, 0) + 1
+        for n_gram, amount in n_gram_counts.items():
+            match = n_gram[:-1]
+            match_count = match_counts.get(match, 0)
+            if match_count == 0:
+                return 1
+            self._n_gram_frequencies[n_gram] = amount / match_count
+        return 0
 
     def generate_next_token(self, sequence: tuple[int, ...]) -> dict | None:
         """
@@ -294,6 +319,19 @@ class NGramLanguageModel:
 
         In case of corrupt input arguments, None is returned
         """
+        if not isinstance(sequence, tuple) or not sequence:
+            return None
+        if not len(sequence) >= self._n_gram_size - 1:
+            return None
+        context = sequence[-self._n_gram_size + 1:]
+        result = {}
+        for n_gram, probability in self._n_gram_frequencies.items():
+            if n_gram[:-1] == context:
+                next_token = n_gram[-1]
+                result[next_token] = probability
+        if not result:
+            return None
+        return result
 
     def _extract_n_grams(
         self, encoded_corpus: tuple[int, ...]
@@ -309,6 +347,12 @@ class NGramLanguageModel:
 
         In case of corrupt input arguments, None is returned
         """
+        if not isinstance(encoded_corpus, tuple) or not encoded_corpus:
+            return None
+        n_grams = []
+        for i in range(len(encoded_corpus) - self._n_gram_size + 1):
+            n_grams.append(encoded_corpus[i: i + self._n_gram_size])
+        return tuple(n_grams)
 
 
 class GreedyTextGenerator:
