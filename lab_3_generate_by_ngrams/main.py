@@ -402,7 +402,7 @@ class GreedyTextGenerator:
         context_size = n_gram_order - 1
         current_context = tokenized_prompt[-context_size:]
         complete_sequence = list(tokenized_prompt)
-        for generation_iteration in range(seq_len):
+        for _ in range(seq_len):
             candidate_tokens = self._model.generate_next_token(current_context)
             if not candidate_tokens:
                 break
