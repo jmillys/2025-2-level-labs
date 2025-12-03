@@ -75,6 +75,32 @@ class WordProcessor(TextProcessor):
         Returns:
             tuple: Tuple of encoded sentences, each as a tuple of word IDs
         """
+        if not isinstance(text, str):
+            raise EncodingError("Invalid input: text must be a string")
+        if not text.strip():
+            raise EncodingError("Invalid input: text must be a non-empty string")
+        token_sequence = self._tokenize(text)
+        for token in token_sequence:
+            if token != self._end_of_sentence_token:
+                self._put(token)
+        encoded_sentences = []
+        current_encoded_sentence = []
+        for token in token_sequence:
+            if token == self._end_of_sentence_token:
+                if current_encoded_sentence:
+                    eos_id = self.get_id(self._end_of_sentence_token)
+                    current_encoded_sentence.append(eos_id)
+                    encoded_sentences.append(tuple(current_encoded_sentence))
+                    current_encoded_sentence = []
+            else:
+                word_id = self.get_id(token)
+                current_encoded_sentence.append(word_id)
+        if current_encoded_sentence:
+            eos_id = self.get_id(self._end_of_sentence_token)
+            current_encoded_sentence.append(eos_id)
+            encoded_sentence = tuple(current_encoded_sentence)
+            encoded_sentences.append(encoded_sentence)
+        return tuple(encoded_sentences)
 
     def _put(self, element: str) -> None:
         """
@@ -86,6 +112,12 @@ class WordProcessor(TextProcessor):
         In case of corrupt input arguments or invalid argument length,
         an element is not added to storage
         """
+        if not isinstance(element, str) or not element.strip():
+            return
+        if element in self._storage:
+            return
+        self._storage[element] = len(self._storage)
+
 
     def _postprocess_decoded_text(self, decoded_corpus: tuple[str, ...]) -> str:
         """
@@ -100,6 +132,39 @@ class WordProcessor(TextProcessor):
         Returns:
             str: Resulting text
         """
+        if not isinstance(decoded_corpus, tuple):
+            raise DecodingError("Invalid input: decoded_corpus must be a tuple")
+        if not decoded_corpus:
+            raise DecodingError("Invalid input: decoded_corpus must be a non-empty tuple")
+        sentences_list = []
+        current_words = []
+        for word in decoded_corpus:
+            if word == self._end_of_sentence_token:
+                if current_words:
+                    sentence = " ".join(current_words)
+                    sentences_list.append(sentence)
+                    current_words = []
+            else:
+                current_words.append(word)
+        if current_words:
+            last_sentence = " ".join(current_words)
+            sentences_list.append(last_sentence)
+        if not sentences_list:
+            raise DecodingError("Postprocessing resulted in empty output")
+        formatted_sentences = []
+        for sentence in sentences_list:
+            if not sentence:  # Skip empty strings
+                continue
+            if sentence[0].isalpha():
+                capitalized = sentence[0].upper() + sentence[1:]
+            else:
+                capitalized = sentence
+            if not capitalized.endswith('.'):
+                capitalized += '.'
+            formatted_sentences.append(capitalized)
+        if not formatted_sentences:
+            raise DecodingError("Postprocessing resulted in empty output after formatting")
+        return " ".join(formatted_sentences)
 
     def _tokenize(self, text: str) -> tuple[str, ...]:
         """
