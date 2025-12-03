@@ -10,6 +10,35 @@ from lab_3_generate_by_ngrams.main import BackOffGenerator, NGramLanguageModel, 
 NGramType = tuple[int, ...]
 "Type alias for NGram."
 
+class TriePrefixNotFoundError(Exception):
+    """
+    Exception raised when something fails due to something
+    """
+
+
+class EncodingError(Exception):
+    """
+    Exception raised when something fails due to something
+    """
+
+
+class DecodingError(Exception):
+    """
+    Exception raised when something fails due to something
+    """
+
+
+class IncorrectNgramError(Exception):
+    """
+    Exception raised when something fails due to something
+    """
+
+
+class MergeTreesError(Exception):
+    """
+    Exception raised when something fails due to something
+    """
+
 
 class WordProcessor(TextProcessor):
     """
@@ -28,6 +57,9 @@ class WordProcessor(TextProcessor):
         Args:
             end_of_sentence_token (str): A token denoting sentence boundary
         """
+        super().__init__(end_of_word_token = end_of_sentence_token)
+        self._end_of_sentence_token = end_of_sentence_token
+        self._storage = {self._end_of_sentence_token: 0}
 
     def encode_sentences(self, text: str) -> tuple:
         """
@@ -82,6 +114,39 @@ class WordProcessor(TextProcessor):
         Returns:
             tuple[str, ...]: Tokenized text as words
         """
+        if not isinstance(text, str):
+            raise EncodingError("Invalid input: text must be a string")
+        if not text.strip():
+            raise EncodingError("Invalid input: text must be a non-empty string")
+        processed_tokens = []
+        sentence = []
+        extracted_sentences = []
+        for character in text:
+            if character in '.!?':
+                complete_sentence = ''.join(sentence).strip()
+                if complete_sentence:
+                    extracted_sentences.append(complete_sentence)
+                sentence = []
+            else:
+                sentence.append(character)
+        if sentence:
+            final_sentence = ''.join(sentence).strip()
+            if final_sentence:
+                extracted_sentences.append(final_sentence)
+        for sentence in extracted_sentences:
+            words = sentence.lower().split()
+            clean_words = []
+            for word in words:
+                cleaned = ''.join(char for char in word if char.isalpha())
+                if cleaned:
+                    clean_words.append(cleaned)
+            if clean_words:
+                processed_tokens.extend(clean_words)
+                processed_tokens.append(self._end_of_sentence_token)
+        if not processed_tokens:
+            raise EncodingError("Tokenization resulted in empty output")
+        return tuple(processed_tokens)
+        
 
 
 class TrieNode:
