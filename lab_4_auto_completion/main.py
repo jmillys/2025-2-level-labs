@@ -333,11 +333,13 @@ class PrefixTrie:
         """
         Initialize an empty PrefixTrie.
         """
+        self._root = TrieNode()
 
     def clean(self) -> None:
         """
         Clean the whole tree.
         """
+        self._root = TrieNode()
 
     def fill(self, encoded_corpus: tuple[NGramType]) -> None:
         """
@@ -346,6 +348,9 @@ class PrefixTrie:
         Args:
             encoded_corpus (tuple[NGramType]): Tokenized corpus.
         """
+        self.clean()
+        for element in encoded_corpus:
+            self._insert(element)
 
     def get_prefix(self, prefix: NGramType) -> TrieNode:
         """
@@ -357,6 +362,17 @@ class PrefixTrie:
         Returns:
             TrieNode: Found TrieNode by prefix
         """
+        current_node = self._root
+        for item in prefix:
+            found_child = None
+            for child in current_node.get_children():
+                if child.get_name() == item:
+                    found_child = child
+                    break
+            if found_child is None:
+                raise TriePrefixNotFoundError(f'Prefix {prefix} not found in trie')
+            current_node = found_child
+        return current_node
 
     def suggest(self, prefix: NGramType) -> tuple:
         """
@@ -369,6 +385,22 @@ class PrefixTrie:
             tuple: Tuple of all token sequences that begin with the given prefix.
                                    Empty tuple if prefix not found.
         """
+        try:
+            prefix_node = self.get_prefix(prefix)
+        except TriePrefixNotFoundError:
+            return ()
+        sequences = []
+        processing_queue = [(prefix_node, list(prefix))]
+        while processing_queue:
+            current_node, current_sequence = processing_queue.pop(0)
+            for child in current_node.get_children():
+                child_name = child.get_name()
+                if child_name is not None:
+                    new_sequence = current_sequence + [child_name]
+                    processing_queue.append((child, new_sequence))
+                    if not child.has_children():
+                        sequences.append(tuple(new_sequence))
+        return tuple(sequences) 
 
     def _insert(self, sequence: NGramType) -> None:
         """
@@ -377,6 +409,13 @@ class PrefixTrie:
         Args:
             sequence (NGramType): Tokens to insert.
         """
+        current = self._root
+        for token in sequence:
+            children = current.get_children(token)
+            if not children:
+                current.add_child(token)
+                children = current.get_children(token)
+            current = children[0]
 
 
 class NGramTrieLanguageModel(PrefixTrie, NGramLanguageModel):
