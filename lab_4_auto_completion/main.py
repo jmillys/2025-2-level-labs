@@ -395,7 +395,7 @@ class PrefixTrie:
             current_node, current_sequence = processing_queue.pop(0)
             for child in current_node.get_children():
                 child_name = child.get_name()
-                if child_name is not None:
+                if child_name:
                     new_sequence = current_sequence + [child_name]
                     processing_queue.append((child, new_sequence))
                     if not child.has_children():
