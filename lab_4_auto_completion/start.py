@@ -24,6 +24,7 @@ def main() -> None:
     prefix_trie = PrefixTrie()
     prefix_trie.fill(encoded_sentences)
     suggestions = prefix_trie.suggest((2,))
+    decoded = None
     if suggestions:
         decoded = processor.decode(suggestions[0])
         print(decoded.replace("<EOS>", "").strip())
