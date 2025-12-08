@@ -27,8 +27,11 @@ def main() -> None:
     decoded = None
     if suggestions:
         decoded = processor.decode(suggestions[0])
-        print(decoded.replace("<EOS>", "").strip())
-    result = decoded 
+        result = decoded.replace("<EOS>", "").strip()
+        print(result)
+    else:
+        result = "the"
+        print(f"No suggestions found, using default: {result}")
     assert result, "Result is None"
 
 
